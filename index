@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>도란도란 - 시니어 프로그램 플랫폼</title>
+  <meta name="description" content="자녀의 웹사이트 탐색과 시니어의 AI 전화 한 통으로, 어르신의 취미가 소속감과 소득이 되는 로컬 시니어 프로그램 플랫폼">
+  <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        colors: { brand: { navy:'#1A2B4C', purple:'#B57CC4', blue:'#3A9DD5', pink:'#C379BD', dark:'#22242A', surface:'#F9F8F4' } },
+        fontFamily: { serif:['"Nanum Myeongjo"','serif'], sans:['"Noto Sans KR"','sans-serif'] }
+      }}
+    }
+  </script>
+  <style>
+    *{box-sizing:border-box;}
+    body{font-family:'Noto Sans KR',sans-serif;overflow-x:hidden;background:#F9F8F4;margin:0;}
+    .font-serif{font-family:'Nanum Myeongjo',serif;}
+    .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;display:inline-block;vertical-align:middle;line-height:1;}
+    html{scroll-behavior:smooth;}
+
+    /* ── Hero: 원래 등축 도시 일러스트 (일본어 완벽 제거 버전) ── */
+    .hero-bg{
+      background-image: url('bg_clean.png');
+      background-size: cover;
+      background-position: center top;
+      background-repeat: no-repeat;
+      position: relative;
+    }
+
+
+    .glass-nav{background:rgba(255,255,255,0.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);}
+
+    /* ── Animations ── */
+    @keyframes fadeInLeft{from{opacity:0;transform:translateX(-24px)}to{opacity:1;transform:translateX(0)}}
+    @keyframes fadeInRight{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:translateX(0)}}
+    @keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes wave{0%,100%{height:5px}50%{height:16px}}
+    @keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.2)}}
+    .anim-left{animation:fadeInLeft .8s ease-out both;}
+    .anim-right{animation:fadeInRight .8s ease-out both;}
+
+    /* ── Nav ── */
+    .nav-btn{
+      font-size:14px;font-weight:500;color:#1A2B4C;cursor:pointer;
+      display:flex;align-items:center;gap:4px;transition:color .2s;
+      background:none;border:none;padding:0;font-family:'Noto Sans KR',sans-serif;
+    }
+    .nav-btn:hover{color:#B57CC4;}
+    .nav-arrow{width:14px;height:14px;flex-shrink:0;}
+
+    /* ── Action cards ── */
+    .action-card{
+      display:flex;align-items:center;gap:14px;border-radius:16px;padding:14px 18px;
+      color:white;cursor:pointer;
+      transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s;
+      box-shadow:0 6px 24px rgba(0,0,0,.18);font-weight:700;font-size:14px;
+      width:100%;border:none;text-align:left;
+    }
+    .action-card:hover{transform:translateX(-8px);box-shadow:0 10px 32px rgba(0,0,0,.22);}
+    .action-icon{width:34px;height:34px;border-radius:8px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+
+    .info-badge{
+      background:rgba(255,255,255,.97);border:2px solid #B57CC4;border-radius:28px;
+      padding:12px 18px;text-align:center;width:220px;position:relative;
+      box-shadow:0 4px 20px rgba(181,124,196,.2);
+    }
+
+    /* ── Program cards ── */
+    .program-card{background:white;border-radius:18px;box-shadow:0 4px 20px rgba(26,43,76,.08);overflow:hidden;cursor:pointer;transition:transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s;}
+    .program-card:hover{transform:translateY(-5px);box-shadow:0 12px 40px rgba(26,43,76,.14);}
+    .section-label{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#B57CC4;}
+
+    /* ── Phone frame ── */
+    .phone-frame{width:300px;background:#fff;border-radius:36px;box-shadow:0 0 0 2px #1A2B4C,0 24px 60px rgba(0,0,0,.22);overflow:hidden;flex-shrink:0;}
+    .phone-notch{width:100px;height:22px;background:#111;border-radius:0 0 14px 14px;margin:0 auto;}
+    .dial-key{width:60px;height:60px;border-radius:50%;border:1.5px solid rgba(26,43,76,.15);background:white;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:all .15s;box-shadow:0 2px 6px rgba(0,0,0,.06);user-select:none;}
+    .dial-key:hover{background:#e9edff;transform:scale(1.07);}
+    .dial-key:active{transform:scale(.92);background:#d8e2ff;}
+    .wave-bar{width:3px;background:#1A2B4C;border-radius:2px;animation:wave 1.2s ease-in-out infinite;}
+
+    /* ── Signup modal ── */
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);z-index:1000;align-items:center;justify-content:center;}
+    .modal-overlay.open{display:flex;}
+    .modal-box{background:white;border-radius:24px;padding:40px 36px;max-width:480px;width:90%;box-shadow:0 24px 80px rgba(0,0,0,.2);position:relative;animation:fadeInUp .35s ease-out both;}
+    .signup-card{border:2px solid transparent;border-radius:16px;padding:22px;cursor:pointer;transition:all .25s;background:#F9F8F4;display:flex;align-items:flex-start;gap:16px;text-decoration:none;color:inherit;}
+    .signup-card:hover{border-color:#B57CC4;background:#fdf4ff;transform:scale(1.01);}
+  </style>
+</head>
+<body class="text-brand-navy">
+
+<!-- ══════════════════════════════════════
+     HEADER
+══════════════════════════════════════ -->
+<header class="fixed top-0 left-0 w-full z-50 glass-nav border-b border-gray-100" style="height:72px;">
+  <div style="max-width:1280px;margin:0 auto;padding:0 32px;height:100%;display:flex;align-items:center;justify-content:space-between;">
+    <!-- Logo -->
+    <div style="display:flex;align-items:center;gap:10px;cursor:pointer;" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+      <div style="width:40px;height:40px;background:#B57CC4;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:18px;" class="font-serif">도</div>
+      <span class="font-serif" style="font-size:22px;font-weight:800;color:#1A2B4C;">도란도란</span>
+    </div>
+    <!-- Nav — 모든 항목에 아래 화살표 추가 -->
+    <nav style="display:flex;align-items:center;gap:26px;">
+      <button class="nav-btn" onclick="goToSection('programs')">프로그램 찾기 <svg class="nav-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></button>
+      <button class="nav-btn" onclick="goToSection('service-guide')">프로그램 가이드 <svg class="nav-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></button>
+      <button class="nav-btn" onclick="goToSection('why')">우리 동네 이야기 <svg class="nav-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></button>
+      <button class="nav-btn" onclick="goToSection('news-section')">뉴스 <svg class="nav-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 9l-7 7-7-7"/></svg></button>
+    </nav>
+    <!-- Right -->
+    <div style="display:flex;align-items:center;gap:16px;">
+      <a href="mailto:hello@dorandoran.kr" style="display:flex;align-items:center;gap:6px;font-size:13px;color:#1A2B4C;text-decoration:none;" class="nav-btn">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        문의하기
+      </a>
+      <a href="#" style="color:#C379BD;display:flex;transition:color .2s;" onmouseover="this.style.color='#a06ab0'" onmouseout="this.style.color='#C379BD'">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.584.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+      </a>
+      <button onclick="openSignup()" style="background:#B57CC4;color:white;border:none;padding:10px 22px;border-radius:999px;font-size:13px;font-weight:700;cursor:pointer;transition:all .25s;" onmouseover="this.style.background='#a06ab0'" onmouseout="this.style.background='#B57CC4'">참여 신청</button>
+    </div>
+  </div>
+</header>
+
+
+<!-- ══════════════════════════════════════
+     참여 신청 MODAL
+══════════════════════════════════════ -->
+<div id="signup-modal" class="modal-overlay" onclick="if(event.target===this)closeSignup()">
+  <div class="modal-box">
+    <button onclick="closeSignup()" style="position:absolute;top:14px;right:18px;background:none;border:none;cursor:pointer;color:#999;font-size:22px;line-height:1;">✕</button>
+    <div style="text-align:center;margin-bottom:26px;">
+      <div style="width:52px;height:52px;background:linear-gradient(135deg,#B57CC4,#C379BD);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">
+        <span class="material-symbols-outlined" style="color:white;font-size:26px;">how_to_reg</span>
+      </div>
+      <h2 class="font-serif" style="font-size:26px;font-weight:800;color:#1A2B4C;margin:0 0 6px;">참여 신청</h2>
+      <p style="color:#888;font-size:14px;margin:0;">신청 방법을 선택해 주세요</p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <a class="signup-card" href="https://forms.gle/example" target="_blank" rel="noopener">
+        <div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#3A9DD5,#1A2B4C);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <span class="material-symbols-outlined" style="color:white;font-size:24px;">family_restroom</span>
+        </div>
+        <div>
+          <div style="font-weight:800;font-size:16px;color:#1A2B4C;margin-bottom:4px;">자녀가 부모님 대신 신청</div>
+          <div style="font-size:13px;color:#888;line-height:1.6;">온라인 신청서(구글폼)를 작성해서<br>부모님 정보를 입력해 드리세요.</div>
+          <div style="display:inline-flex;align-items:center;gap:4px;margin-top:8px;background:#e9f5ff;color:#3A9DD5;padding:4px 12px;border-radius:999px;font-size:12px;font-weight:700;">
+            <span class="material-symbols-outlined" style="font-size:14px;">open_in_new</span> 구글폼 바로가기
+          </div>
+        </div>
+      </a>
+      <a class="signup-card" href="tel:15880000">
+        <div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#B57CC4,#C379BD);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <span class="material-symbols-outlined" style="color:white;font-size:24px;">call</span>
+        </div>
+        <div>
+          <div style="font-weight:800;font-size:16px;color:#1A2B4C;margin-bottom:4px;">부모님이 직접 전화로 신청</div>
+          <div style="font-size:13px;color:#888;line-height:1.6;">대표번호로 전화하시면 AI가 친절하게<br>안내해 드립니다. (24시간 운영)</div>
+          <div style="display:inline-flex;align-items:center;gap:4px;margin-top:8px;background:#fdf4ff;color:#B57CC4;padding:4px 12px;border-radius:999px;font-size:12px;font-weight:700;">
+            <span class="material-symbols-outlined" style="font-size:14px;">call</span> 1588-0000 전화하기
+          </div>
+        </div>
+      </a>
+    </div>
+    <p style="text-align:center;color:#ccc;font-size:12px;margin-top:18px;">두 방법 모두 무료로 이용하실 수 있습니다</p>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     HERO SECTION — 깨끗한 AI 생성 배경
+══════════════════════════════════════ -->
+<main class="hero-bg" style="min-height:100vh;padding-top:72px;display:flex;align-items:center;overflow:hidden;position:relative;">
+  <!-- Blue dot marker on the orange building in the center-right of illustration -->
+  <div style="position:absolute; left:62.5%; top:36.5%; width:10px; height:10px; background:#0052cc; border-radius:50%; border:2px solid white; z-index:2; box-shadow:0 0 10px rgba(0,82,204,0.6); pointer-events:none; animation: pulse-dot 2s infinite;"></div>
+
+  <div style="position:relative;z-index:5;max-width:1280px;margin:0 auto;padding:40px 32px 80px;width:100%;display:grid;grid-template-columns:1fr auto;gap:40px;align-items:center;">
+
+    <!-- LEFT: Hero text (글자 뒤에 더 투명한 흰색 박스 적용) -->
+    <div class="anim-left" style="position:relative; max-width:650px; background:rgba(255, 255, 255, 0.5); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); padding: 36px 40px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); border: 1px solid rgba(255, 255, 255, 0.5);">
+      <h1 class="font-serif" style="font-size:clamp(32px,4.5vw,50px);font-weight:800;color:#1A2B4C;line-height:1.45;margin:0 0 16px;letter-spacing:-0.02em;">
+        활력이 소득이 되는<br>
+        특별한 연결.
+      </h1>
+      <p style="font-size:15px;font-weight:500;color:#333333;line-height:1.8;margin:0;">
+        시니어 프로그램 플랫폼 <span class="font-serif" style="font-weight:800;color:#B57CC4;">도란도란</span>
+      </p>
+    </div>
+
+    <!-- RIGHT: Action cards -->
+    <div class="anim-right" style="display:flex;flex-direction:column;align-items:flex-end;gap:12px;margin-top:20px;">
+      <!-- Speech bubble badge pointing down to the cards -->
+      <div id="info-badge-container" style="margin-bottom:8px; position:relative; align-self:flex-end; animation: fadeInUp .5s ease-out both;">
+        <div style="background:#fff; border: 1.5px solid #C379BD; border-radius: 999px; padding: 10px 18px; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(181,124,196,0.15); position: relative; z-index: 10;">
+          <span style="color:#C379BD; font-weight:700; font-size:13px; white-space:nowrap;">어르신 취미 프로그램 참여 안내</span>
+          <button onclick="document.getElementById('info-badge-container').style.display='none'" style="background:none; border:none; cursor:pointer; color:#999; font-size:14px; padding: 0 0 2px 2px; line-height:1; display:flex; align-items:center;">✕</button>
+        </div>
+        <div style="position:absolute; bottom:-5px; right:40px; width:10px; height:10px; background:#fff; border-right:1.5px solid #C379BD; border-bottom:1.5px solid #C379BD; transform:rotate(45deg); z-index:5;"></div>
+      </div>
+      
+      <!-- 성수동 목공예 -->
+      <button class="action-card" style="background:#3A9DD5;max-width:260px;" onclick="goToSection('programs')">
+        <div class="action-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+        </div>
+        <span>성수동 목공예 프로그램 상세</span>
+      </button>
+      
+      <!-- 광화문 수제청 -->
+      <button class="action-card" style="background:#C379BD;max-width:260px;" onclick="goToSection('programs')">
+        <div class="action-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+        </div>
+        <span>광화문 수제청 클래스 상세</span>
+      </button>
+      
+      <!-- 실시간 상담원 -->
+      <button class="action-card" style="background:#22242A;max-width:260px;" onclick="openSignup()">
+        <div class="action-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg>
+        </div>
+        <span>실시간 상담원 연결</span>
+      </button>
+    </div>
+  </div>
+</main>
+
+
+<!-- ══════════════════════════════════════
+     PROGRAMS
+══════════════════════════════════════ -->
+<section id="programs" style="background:#F9F8F4;padding:100px 32px;">
+  <div style="max-width:1200px;margin:0 auto;">
+    <div style="text-align:center;margin-bottom:60px;">
+      <span class="section-label">프로그램 안내</span>
+      <h2 class="font-serif" style="font-size:42px;font-weight:800;color:#1A2B4C;margin:14px 0 16px;">함께하는 프로그램</h2>
+      <p style="color:#666;font-size:17px;line-height:1.8;max-width:460px;margin:0 auto;">어르신의 손끝에서 탄생하는 작품이<br>소득이 되고, 이웃이 되는 특별한 경험</p>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:28px;">
+      <!-- 성수동 목공예 -->
+      <div class="program-card" onclick="goToSection('service-guide')">
+        <div style="height:220px;position:relative;overflow:hidden;">
+          <img src="woodwork.png" alt="성수동 목공예" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.style.background='linear-gradient(135deg,#3A9DD5,#1A2B4C)';this.style.display='none'">
+          <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(26,43,76,.6) 0%,transparent 60%);"></div>
+          <div style="position:absolute;bottom:14px;left:16px;background:rgba(58,157,213,.9);color:white;padding:4px 12px;border-radius:999px;font-size:12px;font-weight:700;">📍 성수동</div>
+        </div>
+        <div style="padding:26px;">
+          <h3 class="font-serif" style="font-size:22px;font-weight:800;color:#1A2B4C;margin:0 0 10px;">목공예 프로그램</h3>
+          <p style="color:#666;font-size:14px;line-height:1.7;margin:0 0 18px;">손으로 뚝딱거리기 좋아하시는 어르신을 위한 목공예 클래스. 완성품을 팔아 용돈도 버세요.</p>
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="color:#B57CC4;font-weight:700;">월 ₩80,000~120,000</span>
+            <span style="color:#3A9DD5;font-size:13px;font-weight:600;">자세히 보기 →</span>
+          </div>
+        </div>
+      </div>
+      <!-- 광화문 수제청 -->
+      <div class="program-card" onclick="goToSection('service-guide')">
+        <div style="height:220px;position:relative;overflow:hidden;">
+          <img src="syrup.png" alt="광화문 수제청" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.style.background='linear-gradient(135deg,#C379BD,#8B4A9C)';this.style.display='none'">
+          <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(139,74,156,.6) 0%,transparent 60%);"></div>
+          <div style="position:absolute;bottom:14px;left:16px;background:rgba(195,121,189,.9);color:white;padding:4px 12px;border-radius:999px;font-size:12px;font-weight:700;">📍 광화문</div>
+        </div>
+        <div style="padding:26px;">
+          <h3 class="font-serif" style="font-size:22px;font-weight:800;color:#1A2B4C;margin:0 0 10px;">수제청 &amp; 과일칩 프로그램</h3>
+          <p style="color:#666;font-size:14px;line-height:1.7;margin:0 0 18px;">요리 손맛 좋은 어르신을 위한 클래스. 동년배와 수다 떨며 수제청·과일칩 만들어요.</p>
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="color:#B57CC4;font-weight:700;">월 ₩60,000~90,000</span>
+            <span style="color:#C379BD;font-size:13px;font-weight:600;">자세히 보기 →</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════
+     SERVICE GUIDE (프로그램 가이드)
+══════════════════════════════════════ -->
+<section id="service-guide" style="background:#fff;padding:100px 32px;">
+  <div style="max-width:1200px;margin:0 auto;">
+    <div style="text-align:center;margin-bottom:16px;">
+      <span class="section-label">프로그램 가이드</span>
+      <h2 class="font-serif" style="font-size:42px;font-weight:800;color:#1A2B4C;margin:14px 0 16px;">전화 한 통으로 예약 완료</h2>
+      <p style="color:#666;font-size:17px;line-height:1.8;max-width:520px;margin:0 auto;">부모님께 대표번호를 알려드리세요. AI가 친절하게 안내해 드립니다.</p>
+    </div>
+
+    <!-- Phone banner -->
+    <div style="background:linear-gradient(135deg,#1A2B4C,#2d4a7a);border-radius:20px;padding:26px 36px;display:flex;align-items:center;justify-content:space-between;margin:40px 0 60px;cursor:pointer;transition:transform .2s;" onmouseover="this.style.transform='scale(1.01)'" onmouseout="this.style.transform='scale(1)'">
+      <div style="display:flex;align-items:center;gap:20px;">
+        <div style="width:52px;height:52px;background:rgba(255,255,255,.12);border-radius:14px;display:flex;align-items:center;justify-content:center;">
+          <span class="material-symbols-outlined" style="color:white;font-size:26px;">call</span>
+        </div>
+        <div>
+          <div style="color:rgba(255,255,255,.65);font-size:12px;font-weight:700;letter-spacing:.1em;margin-bottom:4px;">부모님께 이 번호를 알려주세요</div>
+          <div class="font-serif" style="color:white;font-size:34px;font-weight:800;letter-spacing:.06em;">📞 1588 - 0000</div>
+          <div style="color:rgba(255,255,255,.65);font-size:13px;margin-top:4px;">AI 자동응답 24시간 운영 · 광화문 1번 · 성수동 2번</div>
+        </div>
+      </div>
+      <button onclick="openSignup()" style="background:rgba(255,255,255,.14);border:1.5px solid rgba(255,255,255,.3);padding:10px 22px;border-radius:999px;color:white;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:8px;">
+        <span class="material-symbols-outlined" style="font-size:16px;">how_to_reg</span> 지금 참여 신청
+      </button>
+    </div>
+
+    <!-- Steps -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:60px;">
+      <div style="text-align:center;padding:24px 16px;background:#F9F8F4;border-radius:16px;">
+        <div style="width:40px;height:40px;background:#e9f5ff;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-weight:800;color:#3A9DD5;font-size:18px;">1</div>
+        <div style="font-weight:700;color:#1A2B4C;font-size:15px;margin-bottom:6px;">자녀가 웹에서 탐색</div>
+        <div style="color:#888;font-size:13px;line-height:1.6;">도란도란 웹사이트에서 프로그램 확인 후 부모님께 대표번호 전달</div>
+      </div>
+      <div style="text-align:center;padding:24px 16px;background:#F9F8F4;border-radius:16px;position:relative;">
+        <div style="position:absolute;top:50%;left:-8px;transform:translateY(-50%);color:#B57CC4;font-size:18px;">→</div>
+        <div style="width:40px;height:40px;background:#fdf4ff;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-weight:800;color:#B57CC4;font-size:18px;">2</div>
+        <div style="font-weight:700;color:#1A2B4C;font-size:15px;margin-bottom:6px;">어르신이 전화 한 통</div>
+        <div style="color:#888;font-size:13px;line-height:1.6;">AI 안내에 따라 원하는 번호를 누르면 예약 완료</div>
+      </div>
+      <div style="text-align:center;padding:24px 16px;background:#F9F8F4;border-radius:16px;position:relative;">
+        <div style="position:absolute;top:50%;left:-8px;transform:translateY(-50%);color:#B57CC4;font-size:18px;">→</div>
+        <div style="width:40px;height:40px;background:#f0fdf4;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-weight:800;color:#16a34a;font-size:18px;">3</div>
+        <div style="font-weight:700;color:#1A2B4C;font-size:15px;margin-bottom:6px;">문자 확인 후 출발</div>
+        <div style="color:#888;font-size:13px;line-height:1.6;">장소·시간·준비물이 담긴 문자 확인 후 거점으로 이동</div>
+      </div>
+    </div>
+
+    <!-- TWO PHONE MOCKUPS -->
+    <div style="display:flex;gap:40px;align-items:flex-start;justify-content:center;flex-wrap:wrap;">
+      <!-- LEFT: AI ARS -->
+      <div style="display:flex;flex-direction:column;align-items:center;gap:16px;">
+        <div style="background:#1A2B4C;color:white;padding:8px 20px;border-radius:999px;font-size:12px;font-weight:700;display:flex;align-items:center;gap:8px;">
+          <span class="material-symbols-outlined" style="font-size:14px;">smartphone</span> AI ARS 통화 화면
+        </div>
+        <div class="phone-frame">
+          <div style="background:#000;padding:6px 0;display:flex;justify-content:center;"><div class="phone-notch"></div></div>
+          <div style="padding:6px 16px;display:flex;justify-content:space-between;align-items:center;font-size:11px;color:#1A2B4C;font-weight:500;">
+            <span>오전 10:45</span>
+            <div style="display:flex;gap:4px;">
+              <span class="material-symbols-outlined" style="font-size:13px;">signal_cellular_alt</span>
+              <span class="material-symbols-outlined" style="font-size:13px;">wifi</span>
+              <span class="material-symbols-outlined" style="font-size:13px;">battery_full</span>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;padding:12px 16px 8px;">
+            <div style="width:60px;height:60px;border-radius:50%;border:1.5px solid #1A2B4C;background:white;margin-bottom:8px;display:flex;align-items:center;justify-content:center;">
+              <span style="font-size:28px;">🌸</span>
+            </div>
+            <div class="font-serif" style="font-size:22px;font-weight:800;color:#1A2B4C;">도란도란</div>
+            <div style="display:flex;align-items:center;gap:5px;margin-top:5px;font-size:11px;color:#666;">
+              <span style="width:6px;height:6px;border-radius:50%;background:#ba1a1a;animation:pulse-dot 2s infinite;display:inline-block;"></span>
+              AI 보이스 어시스턴트 연결 중
+            </div>
+          </div>
+          <div style="margin:6px 12px;background:#F9F8F4;border-radius:12px;padding:12px;min-height:76px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;border:1px solid rgba(26,43,76,.08);position:relative;overflow:hidden;">
+            <div id="phone-progress-bar" style="position:absolute;top:0;left:0;height:2px;background:linear-gradient(90deg,#B57CC4,#3A9DD5);width:100%;transition:width .5s;"></div>
+            <div style="display:flex;gap:2px;align-items:center;margin-bottom:6px;">
+              <div class="wave-bar" style="animation-delay:0s;"></div>
+              <div class="wave-bar" style="animation-delay:.12s;"></div>
+              <div class="wave-bar" style="animation-delay:.24s;"></div>
+              <div class="wave-bar" style="animation-delay:.36s;"></div>
+              <div class="wave-bar" style="animation-delay:.48s;"></div>
+            </div>
+            <p id="phone-subtitle" style="font-size:13px;color:#1A2B4C;line-height:1.6;margin:0;">"광화문 수제청은 <span style="color:#ba1a1a;font-weight:700;">1</span>번,<br>성수동 목공예는 <span style="color:#ba1a1a;font-weight:700;">2</span>번을 눌러주세요."</p>
+          </div>
+          <div style="padding:8px 16px 4px;">
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:230px;margin:0 auto;">
+              <button class="dial-key" onclick="handleDial('1')"><span style="font-size:18px;font-weight:700;color:#1A2B4C;">1</span></button>
+              <button class="dial-key" onclick="handleDial('2')"><span style="font-size:18px;font-weight:700;color:#1A2B4C;">2</span><span style="font-size:8px;color:#888;">ㄱㄴㄷ</span></button>
+              <button class="dial-key" onclick="handleDial('3')"><span style="font-size:18px;font-weight:700;color:#1A2B4C;">3</span><span style="font-size:8px;color:#888;">ㄹㅁㅂ</span></button>
+              <button class="dial-key" onclick="handleDial('4')"><span style="font-size:18px;font-weight:700;color:#1A2B4C;">4</span><span style="font-size:8px;color:#888;">ㅅㅇㅈ</span></button>
+              <button class="dial-key" onclick="handleDial('5')"><span style="font-size:18px;font-weight:700;color:#1A2B4C;">5</span><span style="font-size:8px;color:#888;">ㅊㅋㅌ</span></button>
+              <button class="dial-key" onclick="handleDial('6')"><span style="font-size:18px;font-weight:700;color:#1A2B4C;">6</span><span style="font-size:8px;color:#888;">ㅍㅎ</span></button>
+              <button class="dial-key" onclick="handleDial('7')"><span style="font-size:18px;font-weight:700;color:#1A2B4C;">7</span><span style="font-size:8px;color:#888;">ㅑㅕ</span></button>
+              <button class="dial-key" onclick="handleDial('8')"><span style="font-size:18px;font-weight:700;color:#1A2B4C;">8</span><span style="font-size:8px;color:#888;">ㅜㅠ</span></button>
+              <button class="dial-key" onclick="handleDial('9')"><span style="font-size:18px;font-weight:700;color:#1A2B4C;">9</span><span style="font-size:8px;color:#888;">ㅣㅢ</span></button>
+              <button class="dial-key" onclick="handleDial('*')"><span style="font-size:18px;font-weight:700;color:#1A2B4C;">*</span></button>
+              <button class="dial-key" onclick="handleDial('0')"><span style="font-size:18px;font-weight:700;color:#1A2B4C;">0</span><span style="font-size:8px;color:#888;">+</span></button>
+              <button class="dial-key" onclick="handleDial('#')"><span style="font-size:18px;font-weight:700;color:#1A2B4C;">#</span></button>
+            </div>
+          </div>
+          <div style="padding:10px 16px 16px;display:flex;align-items:center;justify-content:space-around;border-top:1px solid rgba(26,43,76,.07);background:white;">
+            <button onclick="toggleSpeaker()" style="display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;">
+              <div id="speaker-circle" style="width:44px;height:44px;border-radius:50%;border:1.5px solid rgba(26,43,76,.18);background:white;display:flex;align-items:center;justify-content:center;transition:all .2s;">
+                <span id="speaker-icon" class="material-symbols-outlined" style="color:#1A2B4C;font-size:20px;">volume_up</span>
+              </div>
+              <span style="font-size:10px;color:#1A2B4C;font-weight:500;">스피커폰</span>
+            </button>
+            <button style="display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;">
+              <div style="width:56px;height:56px;border-radius:50%;background:#ba1a1a;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(186,26,26,.35);">
+                <span class="material-symbols-outlined" style="color:white;font-size:24px;font-variation-settings:'FILL' 1;">call_end</span>
+              </div>
+              <span style="font-size:10px;color:#ba1a1a;font-weight:700;">통화 종료</span>
+            </button>
+            <button onclick="toggleMute()" style="display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;">
+              <div id="mute-circle" style="width:44px;height:44px;border-radius:50%;border:1.5px solid rgba(26,43,76,.18);background:white;display:flex;align-items:center;justify-content:center;transition:all .2s;">
+                <span id="mute-icon" class="material-symbols-outlined" style="color:#1A2B4C;font-size:20px;">mic</span>
+              </div>
+              <span style="font-size:10px;color:#1A2B4C;font-weight:500;">소리 끄기</span>
+            </button>
+          </div>
+        </div>
+        <p style="color:#888;font-size:12px;text-align:center;max-width:260px;line-height:1.6;">💡 번호를 눌러보세요!</p>
+      </div>
+
+      <!-- Arrow -->
+      <div style="display:flex;align-items:center;padding-top:80px;flex-direction:column;gap:8px;">
+        <div style="font-size:11px;font-weight:700;color:#B57CC4;">번호 입력 후</div>
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#B57CC4" stroke-width="1.5"><path d="M13 7l5 5-5 5M6 7l5 5-5 5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div style="font-size:11px;font-weight:700;color:#B57CC4;">문자 도착</div>
+      </div>
+
+      <!-- RIGHT: SMS -->
+      <div style="display:flex;flex-direction:column;align-items:center;gap:16px;">
+        <div style="background:#16a34a;color:white;padding:8px 20px;border-radius:999px;font-size:12px;font-weight:700;display:flex;align-items:center;gap:8px;">
+          <span class="material-symbols-outlined" style="font-size:14px;">sms</span> 예약 완료 안내 문자
+        </div>
+        <div class="phone-frame">
+          <div style="background:#000;padding:6px 0;display:flex;justify-content:center;"><div class="phone-notch"></div></div>
+          <div style="background:#F2F2F7;padding:6px 16px;display:flex;justify-content:space-between;align-items:center;font-size:11px;color:#1A2B4C;font-weight:500;">
+            <span>오전 11:05</span>
+            <div style="display:flex;gap:4px;">
+              <span class="material-symbols-outlined" style="font-size:13px;">signal_cellular_alt</span>
+              <span class="material-symbols-outlined" style="font-size:13px;">wifi</span>
+              <span class="material-symbols-outlined" style="font-size:13px;">battery_full</span>
+            </div>
+          </div>
+          <div style="background:#F2F2F7;padding:8px 14px 10px;border-bottom:1px solid rgba(0,0,0,.07);display:flex;align-items:center;gap:10px;">
+            <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#B57CC4,#1A2B4C);display:flex;align-items:center;justify-content:center;font-size:14px;">🌸</div>
+            <div>
+              <div style="font-weight:700;font-size:13px;color:#1A2B4C;">도란도란</div>
+              <div style="font-size:10px;color:#999;">1588-0000</div>
+            </div>
+          </div>
+          <div style="padding:14px;background:#F2F2F7;max-height:560px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;">
+            <div style="text-align:center;font-size:10px;color:#999;">오전 11:05</div>
+            <div style="background:#e9edff;border-radius:16px 16px 16px 4px;padding:14px 16px;max-width:90%;font-size:12px;line-height:1.85;color:#071b3b;">
+              <div style="font-size:13px;font-weight:700;color:#1A2B4C;margin-bottom:6px;">내일 뵙겠습니다! 🌸</div>
+              <b>[도란도란] 예약 완료</b><br><br>
+              ✅ <b>광화문 수제청 만들기</b><br>
+              📅 내일, 10월 24일 (수)<br>
+              ⏰ 오전 10:00 – 12:00<br>
+              📍 광화문 회관<br>
+              &nbsp;&nbsp;종로구 세종대로 175<br>
+              &nbsp;&nbsp;(5호선 광화문역 3번 출구)<br><br>
+              <div style="background:#1A2B4C;color:white;border-radius:10px;padding:10px 12px;margin:4px 0;font-size:12px;font-weight:700;">
+                🗺️ 길 안내 받기<br><span style="font-size:11px;font-weight:400;opacity:.85;">maps.naver.com/doran...</span>
+              </div>
+              📋 <b>준비물:</b> 신분증, 본인 명의 휴대전화<br>
+              (재료 제공 / 앞치마 선택)<br><br>
+              문의: 1588-0000<br>
+              내일 뵙기를 고대하고 있을게요 😊
+            </div>
+            <div style="font-size:10px;color:#999;padding-left:4px;">오전 11:05</div>
+            <div style="background:white;border-radius:14px;padding:14px;box-shadow:0 2px 10px rgba(0,0,0,.08);">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+                <span class="material-symbols-outlined" style="color:#16a34a;font-size:20px;font-variation-settings:'FILL' 1;">check_circle</span>
+                <div>
+                  <div style="font-weight:700;font-size:12px;color:#1A2B4C;">예약이 확정되었습니다</div>
+                  <div style="font-size:10px;color:#999;">예약번호: #DR-2024-1024</div>
+                </div>
+              </div>
+              <div style="border:1px solid rgba(26,43,76,.1);border-radius:10px;overflow:hidden;margin-bottom:10px;">
+                <div style="padding:10px 12px;border-bottom:1px solid rgba(26,43,76,.08);display:flex;align-items:center;gap:10px;">
+                  <div style="width:28px;height:28px;border-radius:7px;background:#F9F8F4;border:1px solid rgba(26,43,76,.1);display:flex;align-items:center;justify-content:center;">
+                    <span class="material-symbols-outlined" style="font-size:14px;color:#1A2B4C;">calendar_today</span>
+                  </div>
+                  <div>
+                    <div style="font-size:9px;color:#999;font-weight:700;text-transform:uppercase;margin-bottom:1px;">일시</div>
+                    <div style="font-size:13px;font-weight:700;color:#1A2B4C;" class="font-serif">내일, 10월 24일</div>
+                    <div style="font-size:12px;font-weight:700;color:#1A2B4C;">14:00 – 16:00</div>
+                  </div>
+                </div>
+                <div style="padding:10px 12px;border-bottom:1px solid rgba(26,43,76,.08);display:flex;align-items:center;gap:10px;">
+                  <div style="width:28px;height:28px;border-radius:7px;background:#F9F8F4;border:1px solid rgba(26,43,76,.1);display:flex;align-items:center;justify-content:center;">
+                    <span class="material-symbols-outlined" style="font-size:14px;color:#1A2B4C;">location_on</span>
+                  </div>
+                  <div>
+                    <div style="font-size:9px;color:#999;font-weight:700;text-transform:uppercase;margin-bottom:1px;">장소</div>
+                    <div style="font-size:13px;font-weight:700;color:#1A2B4C;" class="font-serif">광화문 회관</div>
+                    <div style="font-size:11px;color:#666;">서울특별시 종로구 세종대로 175</div>
+                  </div>
+                </div>
+                <div style="height:70px;background:linear-gradient(135deg,#e9edff,#d8e2ff);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;">
+                  <svg style="position:absolute;inset:0;opacity:.12;width:100%;height:100%"><defs><pattern id="g2" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0L0 0 0 20" fill="none" stroke="#1A2B4C" stroke-width=".5"/></pattern></defs><rect width="100%" height="100%" fill="url(#g2)"/></svg>
+                  <div style="background:rgba(26,43,76,.85);color:white;padding:5px 14px;border-radius:999px;font-size:11px;font-weight:700;display:flex;align-items:center;gap:4px;z-index:1;">
+                    <span class="material-symbols-outlined" style="font-size:13px;">map</span> 전체 지도 보기
+                  </div>
+                </div>
+              </div>
+              <div style="font-size:9px;font-weight:700;color:#999;text-transform:uppercase;margin-bottom:6px;">준비물</div>
+              <div style="border:1px solid rgba(26,43,76,.1);border-radius:10px;overflow:hidden;margin-bottom:10px;">
+                <div style="display:flex;align-items:center;gap:10px;padding:7px 12px;border-bottom:1px solid rgba(26,43,76,.07);">
+                  <span class="material-symbols-outlined" style="font-size:15px;color:#1A2B4C;">id_card</span>
+                  <span style="font-size:12px;font-weight:600;color:#1A2B4C;">신분증</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;padding:7px 12px;">
+                  <span class="material-symbols-outlined" style="font-size:15px;color:#1A2B4C;">smartphone</span>
+                  <span style="font-size:12px;font-weight:600;color:#1A2B4C;">본인 명의 휴대전화</span>
+                </div>
+              </div>
+              <button style="width:100%;background:#F9F8F4;border:1.5px solid rgba(26,43,76,.2);color:#1A2B4C;padding:8px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;">
+                <span class="material-symbols-outlined" style="font-size:14px;">call</span> 문의하기
+              </button>
+            </div>
+          </div>
+        </div>
+        <p style="color:#888;font-size:12px;text-align:center;max-width:260px;line-height:1.6;">📱 예약 완료 후 안내 문자가 자동 발송됩니다.</p>
+      </div>
+    </div>
+
+    <div style="text-align:center;margin-top:72px;">
+      <button onclick="openSignup()" style="display:inline-flex;align-items:center;gap:12px;background:linear-gradient(135deg,#B57CC4,#C379BD);color:white;border:none;padding:18px 40px;border-radius:999px;font-size:17px;font-weight:700;box-shadow:0 8px 28px rgba(181,124,196,.35);cursor:pointer;transition:all .3s;" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform='scale(1)'">
+        <span class="material-symbols-outlined" style="font-size:22px;">how_to_reg</span> 지금 바로 참여 신청하기
+      </button>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════
+     WHY (우리 동네 이야기)
+══════════════════════════════════════ -->
+<section id="why" style="background:#F9F8F4;padding:80px 32px;">
+  <div style="max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;">
+    <div>
+      <span class="section-label">우리 동네 이야기</span>
+      <h2 class="font-serif" style="font-size:38px;font-weight:800;color:#1A2B4C;margin:14px 0 20px;line-height:1.2;">전화 한 통이면 돼요</h2>
+      <p style="color:#666;font-size:16px;line-height:1.8;margin-bottom:32px;">어르신들이 가장 익숙한 매체인 '전화'를 통해 참여하는 방식으로 디지털 소외 없이 누구나 쉽게 참여할 수 있습니다.</p>
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div style="display:flex;align-items:center;gap:14px;background:white;padding:16px 20px;border-radius:14px;box-shadow:0 2px 10px rgba(26,43,76,.06);">
+          <span style="font-size:26px;">📞</span>
+          <div><div style="font-weight:700;color:#1A2B4C;font-size:15px;">전화로 예약</div><div style="color:#888;font-size:13px;margin-top:2px;">앱 설치 없이 전화 한 통으로 예약 완료</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px;background:white;padding:16px 20px;border-radius:14px;box-shadow:0 2px 10px rgba(26,43,76,.06);">
+          <span style="font-size:26px;">💌</span>
+          <div><div style="font-weight:700;color:#1A2B4C;font-size:15px;">문자로 안내</div><div style="color:#888;font-size:13px;margin-top:2px;">장소·시간·준비물이 담긴 안내 문자 자동 발송</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px;background:white;padding:16px 20px;border-radius:14px;box-shadow:0 2px 10px rgba(26,43,76,.06);">
+          <span style="font-size:26px;">🚇</span>
+          <div><div style="font-weight:700;color:#1A2B4C;font-size:15px;">전철 및 버스 타고 출발</div><div style="color:#888;font-size:13px;margin-top:2px;">가까운 지하철역과 버스 정류장에서 편리하게</div></div>
+        </div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+      <div style="background:linear-gradient(135deg,#1A2B4C,#2d4a7a);border-radius:20px;padding:28px;color:white;">
+        <div style="font-size:36px;margin-bottom:14px;">240<span style="font-size:20px;">+</span></div>
+        <div style="font-weight:700;font-size:16px;margin-bottom:4px;">참여 어르신</div><div style="font-size:12px;opacity:.7;">누적 참여자</div>
+      </div>
+      <div style="background:linear-gradient(135deg,#B57CC4,#C379BD);border-radius:20px;padding:28px;color:white;">
+        <div style="font-size:36px;margin-bottom:14px;">98<span style="font-size:20px;">%</span></div>
+        <div style="font-weight:700;font-size:16px;margin-bottom:4px;">재참여율</div><div style="font-size:12px;opacity:.8;">한 번 오면 또 옵니다</div>
+      </div>
+      <div style="background:linear-gradient(135deg,#3A9DD5,#2980b9);border-radius:20px;padding:28px;color:white;">
+        <div style="font-size:36px;margin-bottom:14px;">2<span style="font-size:20px;">곳</span></div>
+        <div style="font-weight:700;font-size:16px;margin-bottom:4px;">거점 지역</div><div style="font-size:12px;opacity:.8;">성수동 · 광화문</div>
+      </div>
+      <div style="background:linear-gradient(135deg,#f0fdf4,#dcfce7);border-radius:20px;padding:28px;color:#1A2B4C;border:1px solid #bbf7d0;">
+        <div style="font-size:36px;margin-bottom:14px;">₩<span style="font-size:28px;">80K</span></div>
+        <div style="font-weight:700;font-size:16px;margin-bottom:4px;">월 평균 수익</div><div style="font-size:12px;color:#555;">완성품 판매 연계</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════
+     NEWS
+══════════════════════════════════════ -->
+<section id="news-section" style="background:#1A2B4C;padding:80px 32px;">
+  <div style="max-width:1200px;margin:0 auto;">
+    <div style="text-align:center;margin-bottom:48px;">
+      <span style="font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(181,124,196,.9);">NEWS</span>
+      <h2 class="font-serif" style="font-size:36px;font-weight:800;color:white;margin:14px 0 0;">도란도란 소식</h2>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;">
+      <div style="background:rgba(255,255,255,.07);border-radius:16px;padding:24px;border:1px solid rgba(255,255,255,.1);cursor:pointer;transition:all .3s;" onmouseover="this.style.background='rgba(255,255,255,.12)'" onmouseout="this.style.background='rgba(255,255,255,.07)'">
+        <div style="font-size:11px;color:rgba(181,124,196,.8);font-weight:700;margin-bottom:10px;">2024.10.20</div>
+        <div style="font-weight:700;font-size:16px;color:white;margin-bottom:8px;line-height:1.4;">"도란도란 마을 축제 2024" 성황리에 마무리</div>
+        <div style="font-size:13px;color:rgba(255,255,255,.6);line-height:1.7;">성수동·광화문 두 거점에서 열린 마을 축제에 총 240여명의 어르신이 참여하셨습니다.</div>
+      </div>
+      <div style="background:rgba(255,255,255,.07);border-radius:16px;padding:24px;border:1px solid rgba(255,255,255,.1);cursor:pointer;transition:all .3s;" onmouseover="this.style.background='rgba(255,255,255,.12)'" onmouseout="this.style.background='rgba(255,255,255,.07)'">
+        <div style="font-size:11px;color:rgba(181,124,196,.8);font-weight:700;margin-bottom:10px;">2024.10.01</div>
+        <div style="font-weight:700;font-size:16px;color:white;margin-bottom:8px;line-height:1.4;">광화문 수제청 11월 클래스 모집 시작</div>
+        <div style="font-size:13px;color:rgba(255,255,255,.6);line-height:1.7;">11월 수제청 & 과일칩 클래스 참여자를 모집합니다. 대표번호로 전화 주세요.</div>
+      </div>
+      <div style="background:rgba(255,255,255,.07);border-radius:16px;padding:24px;border:1px solid rgba(255,255,255,.1);cursor:pointer;transition:all .3s;" onmouseover="this.style.background='rgba(255,255,255,.12)'" onmouseout="this.style.background='rgba(255,255,255,.07)'">
+        <div style="font-size:11px;color:rgba(181,124,196,.8);font-weight:700;margin-bottom:10px;">2024.09.15</div>
+        <div style="font-weight:700;font-size:16px;color:white;margin-bottom:8px;line-height:1.4;">성수동 목공예 프로그램 신규 강사 합류</div>
+        <div style="font-size:13px;color:rgba(255,255,255,.6);line-height:1.7;">30년 경력의 베테랑 목공예 강사가 새롭게 합류하여 더욱 알찬 수업을 제공합니다.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════
+     FOOTER
+══════════════════════════════════════ -->
+<footer style="background:#0f1a2e;padding:40px 32px;text-align:center;">
+  <div style="max-width:1200px;margin:0 auto;">
+    <div class="font-serif" style="color:white;font-size:22px;font-weight:800;margin-bottom:8px;">도란도란</div>
+    <div style="color:rgba(255,255,255,.5);font-size:13px;margin-bottom:4px;">시니어 프로그램 플랫폼 · 대표번호 1588-0000</div>
+    <div style="color:rgba(255,255,255,.25);font-size:12px;margin-top:14px;">© 2024 도란도란. All rights reserved.</div>
+  </div>
+</footer>
+
+
+<!-- ══════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════ -->
+<script>
+  function goToSection(id) {
+    const el = document.getElementById(id);
+    if (el) {
+      const offset = 72;
+      const bodyRect = document.body.getBoundingClientRect().top;
+      const elementRect = el.getBoundingClientRect().top;
+      const elementPosition = elementRect - bodyRect;
+      const offsetPosition = elementPosition - offset;
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    }
+  }
+
+  function openSignup() {
+    document.getElementById('signup-modal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeSignup() {
+    document.getElementById('signup-modal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSignup(); });
+
+  let isSpeakerOn = false, isMuted = false;
+  function handleDial(key) {
+    const sub = document.getElementById('phone-subtitle');
+    if (key === '1') sub.innerHTML = '<span style="color:#C379BD;font-weight:700;">광화문 수제청</span>으로 연결 중...';
+    else if (key === '2') sub.innerHTML = '<span style="color:#3A9DD5;font-weight:700;">성수동 목공예</span>로 연결 중...';
+    else if (key === '0') sub.innerHTML = '상담원을 연결 중입니다...';
+    else sub.innerHTML = `<span style="font-weight:700;">${key}</span>번을 누르셨습니다.`;
+    if (navigator.vibrate) navigator.vibrate(40);
+  }
+  function toggleSpeaker() {
+    isSpeakerOn = !isSpeakerOn;
+    const ic = document.getElementById('speaker-icon'), ci = document.getElementById('speaker-circle');
+    if (isSpeakerOn) { ic.textContent = 'volume_off'; ci.style.background = '#1A2B4C'; ic.style.color = 'white'; }
+    else { ic.textContent = 'volume_up'; ci.style.background = 'white'; ic.style.color = '#1A2B4C'; }
+  }
+  function toggleMute() {
+    isMuted = !isMuted;
+    const ic = document.getElementById('mute-icon'), ci = document.getElementById('mute-circle');
+    if (isMuted) { ic.textContent = 'mic_off'; ci.style.background = '#ba1a1a'; ci.style.borderColor = '#ba1a1a'; ic.style.color = 'white'; }
+    else { ic.textContent = 'mic'; ci.style.background = 'white'; ci.style.borderColor = 'rgba(26,43,76,.18)'; ic.style.color = '#1A2B4C'; }
+  }
+
+  const subtitles = [
+    '"광화문 수제청은 <span style="color:#ba1a1a;font-weight:700;">1</span>번,<br>성수동 목공예는 <span style="color:#ba1a1a;font-weight:700;">2</span>번을 눌러주세요."',
+    '"예약 일정 확인은 <span style="color:#ba1a1a;font-weight:700;">3</span>번을 눌러주세요."',
+    '"상담원 연결은 <span style="color:#ba1a1a;font-weight:700;">0</span>번을 눌러주세요."'
+  ];
+  let subIdx = 0;
+  setInterval(() => {
+    const bar = document.getElementById('phone-progress-bar');
+    if (!bar) return;
+    bar.style.width = '0%';
+    setTimeout(() => {
+      bar.style.width = '100%';
+      subIdx = (subIdx + 1) % subtitles.length;
+      document.getElementById('phone-subtitle').innerHTML = subtitles[subIdx];
+    }, 60);
+  }, 5000);
+</script>
+
+</body>
+</html>
